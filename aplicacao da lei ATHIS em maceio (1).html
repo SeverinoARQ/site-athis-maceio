@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise da Lei ATHIS em Maceió</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Earthen Harmony -->
+    <!-- Application Structure Plan: A single-page dashboard application designed for public education. The structure is thematic, guiding the user from understanding the problem (autoconstrução), through the proposed legal solution (ATHIS), to the local context (data from Maceió), a practical application (case study), and finally, a call to action (implementation guidelines). This non-linear, thematic flow was chosen over the TCC's academic chapter structure to make the information more digestible and engaging for a general audience, including community leaders and public managers, facilitating understanding and advocacy. Key interactions include tabbed charts for data exploration and a toggle for the before/after case study comparison. -->
+    <!-- Visualization & Content Choices: Data from the TCC is presented using Chart.js for clarity and interactivity. Goal: Compare -> Viz: Horizontal bar charts for neighborhood/territory occurrences to allow easy reading of labels. Goal: Change -> Viz: Line chart for occurrences over time to show trends. Goal: Inform -> Viz: Donut chart for status distribution. Interaction: The "Dados" section uses tabs to let users focus on one chart at a time, preventing cognitive overload. Goal: Organize/Inform -> Viz: The "Diretrizes" section uses a diagram built with HTML/Tailwind to visualize the proposed workflow, making the complex recommendation easy to grasp. The case study uses a simple toggle interaction to compare 'before' and 'after', clearly demonstrating the impact of the proposed architectural intervention. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #404040;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .nav-link:hover {
+            color: #0d9488;
+        }
+        .nav-link.active {
+            color: #0d9488;
+            border-bottom-width: 2px;
+            border-color: #0d9488;
+        }
+        .tab-btn.active {
+            background-color: #0d9488;
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-teal-800 text-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="text-xl font-bold">ATHIS Maceió</div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#problema" class="nav-link pb-1">O Problema</a>
+                <a href="#solucao" class="nav-link pb-1">A Solução (ATHIS)</a>
+                <a href="#dados" class="nav-link pb-1">Dados em Maceió</a>
+                <a href="#caso" class="nav-link pb-1">Estudo de Caso</a>
+                <a href="#diretrizes" class="nav-link pb-1">Diretrizes</a>
+            </div>
+            <div class="md:hidden">
+                <select id="mobile-nav" class="bg-teal-800 border-none text-white focus:ring-0">
+                    <option value="#problema">O Problema</option>
+                    <option value="#solucao">A Solução (ATHIS)</option>
+                    <option value="#dados">Dados em Maceió</option>
+                    <option value="#caso">Estudo de Caso</option>
+                    <option value="#diretrizes">Diretrizes</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="bg-stone-100 py-16 md:py-24 text-center">
+            <div class="container mx-auto px-6">
+                <h1 class="text-3xl md:text-5xl font-bold text-teal-900 mb-4">Aplicação da Lei ATHIS em Maceió</h1>
+                <p class="text-lg md:text-xl text-stone-700 max-w-3xl mx-auto">Uma análise interativa sobre o direito à moradia digna, os riscos da autoconstrução e o potencial da assistência técnica para transformar a realidade habitacional em Zonas de Interesse Social (ZEIS).</p>
+            </div>
+        </section>
+        
+        <section id="problema" class="py-16 md:py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-10 text-teal-900">O Problema: A Realidade da Autoconstrução</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-stone-600">
+                    A urbanização desigual no Brasil forçou milhões de famílias a construírem suas próprias casas, muitas vezes em áreas de risco e sem orientação técnica. Este processo, conhecido como autoconstrução, é a principal via de acesso à moradia, mas também a origem de graves problemas de segurança e salubridade.
+                </p>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-stone-200">
+                        <div class="text-4xl mb-4 text-amber-600">⚠️</div>
+                        <h3 class="font-bold text-xl mb-2">Risco Estrutural</h3>
+                        <p class="text-stone-600">Construções sem engenheiro ou arquiteto podem apresentar fissuras, infiltrações e até risco de desabamento, colocando vidas em perigo.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-stone-200">
+                        <div class="text-4xl mb-4 text-amber-600">💧</div>
+                        <h3 class="font-bold text-xl mb-2">Falta de Salubridade</h3>
+                        <p class="text-stone-600">Ambientes mal ventilados e iluminados geram mofo e umidade, causando problemas respiratórios e de saúde para a família.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-stone-200">
+                        <div class="text-4xl mb-4 text-amber-600">📜</div>
+                        <h3 class="font-bold text-xl mb-2">Irregularidade</h3>
+                        <p class="text-stone-600">Imóveis construídos sem projeto não podem ser regularizados na prefeitura, gerando insegurança jurídica para os moradores.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solucao" class="py-16 md:py-20 bg-teal-50">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-10 text-teal-900">A Solução: A Lei de Assistência Técnica (ATHIS)</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-stone-600">
+                    A Lei nº 11.888/2008, conhecida como Lei ATHIS, é um marco fundamental que transforma o acesso a arquitetos e engenheiros em um direito. Ela visa qualificar a autoconstrução, garantindo moradias mais seguras e saudáveis.
+                </p>
+                <div class="bg-white p-8 rounded-lg shadow-lg border border-stone-200">
+                    <div id="accordion">
+                        <div>
+                            <button class="w-full text-left font-bold text-xl py-4 border-b border-stone-200 flex justify-between items-center" data-target="content1">
+                                O que é a ATHIS?
+                                <span>+</span>
+                            </button>
+                            <div id="content1" class="accordion-content hidden pt-4 text-stone-600">
+                                É a sigla para Assistência Técnica em Habitação de Interesse Social. A lei garante que famílias de baixa renda tenham acesso gratuito a serviços de arquitetura e engenharia para projetar e construir suas casas.
+                            </div>
+                        </div>
+                        <div>
+                            <button class="w-full text-left font-bold text-xl py-4 border-b border-stone-200 flex justify-between items-center" data-target="content2">
+                                Quem tem direito?
+                                <span>+</span>
+                            </button>
+                            <div id="content2" class="accordion-content hidden pt-4 text-stone-600">
+                                Famílias com renda mensal de até 3 salários mínimos, especialmente aquelas que vivem em Zonas Especiais de Interesse Social (ZEIS), têm direito ao serviço gratuito.
+                            </div>
+                        </div>
+                        <div>
+                            <button class="w-full text-left font-bold text-xl py-4 flex justify-between items-center" data-target="content3">
+                                Quais os benefícios?
+                                <span>+</span>
+                            </button>
+                            <div id="content3" class="accordion-content hidden pt-4 text-stone-600">
+                                Os principais benefícios são: mais segurança na obra, melhor aproveitamento de materiais (economia), ambientes mais saudáveis (com ventilação e iluminação) e a possibilidade de regularizar o imóvel, garantindo a posse legal.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="dados" class="py-16 md:py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-4 text-teal-900">Dados em Maceió: O Mapa do Risco</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-stone-600">
+                    Os dados da Defesa Civil de Maceió (2021-2024) revelam a concentração de ocorrências relacionadas a patologias construtivas em áreas de autoconstrução. Explore os gráficos para entender a dimensão do problema na cidade.
+                </p>
+                <div class="flex justify-center mb-8 space-x-2 md:space-x-4 bg-stone-100 p-2 rounded-full">
+                    <button class="tab-btn px-4 py-2 rounded-full text-sm md:text-base font-medium transition active" data-chart="bairros">Por Bairro</button>
+                    <button class="tab-btn px-4 py-2 rounded-full text-sm md:text-base font-medium transition" data-chart="territorios">Por Território</button>
+                    <button class="tab-btn px-4 py-2 rounded-full text-sm md:text-base font-medium transition" data-chart="tempo">Ao Longo do Tempo</button>
+                    <button class="tab-btn px-4 py-2 rounded-full text-sm md:text-base font-medium transition" data-chart="status">Status das Ocorrências</button>
+                </div>
+
+                <div id="chart-description" class="text-center text-stone-600 mb-8 max-w-2xl mx-auto min-h-[40px]"></div>
+
+                <div class="chart-container" id="chart-bairros-container">
+                    <canvas id="bairrosChart"></canvas>
+                </div>
+                <div class="chart-container hidden" id="chart-territorios-container">
+                    <canvas id="territoriosChart"></canvas>
+                </div>
+                <div class="chart-container hidden" id="chart-tempo-container">
+                    <canvas id="tempoChart"></canvas>
+                </div>
+                <div class="chart-container hidden" id="chart-status-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="caso" class="py-16 md:py-20 bg-stone-100">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-10 text-teal-900">Estudo de Caso: Ladeira da Moenda</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-stone-600">
+                    Para demonstrar o impacto da ATHIS, o TCC analisou um imóvel real na Ladeira da Moenda. A edificação apresentava graves riscos estruturais devido à construção inadequada sobre um aterro instável.
+                </p>
+                
+                <div class="bg-white p-4 md:p-8 rounded-lg shadow-xl border border-stone-200">
+                    <div class="flex justify-center mb-6">
+                        <div class="bg-stone-200 p-1 rounded-full flex">
+                             <button id="btn-antes" class="px-6 py-2 rounded-full text-lg font-semibold bg-white text-teal-800 shadow">Antes</button>
+                             <button id="btn-depois" class="px-6 py-2 rounded-full text-lg font-semibold text-stone-600">Depois</button>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <img id="imagem-caso" src="./antes.jpg" alt="Fachada do imóvel antes da intervenção" class="rounded-lg shadow-md w-full object-cover w-[400px] h-[400px]">
+                        </div>
+                        <div id="texto-caso">
+                            <h3 class="font-bold text-2xl mb-4 text-amber-700">Diagnóstico: Risco Iminente</h3>
+                            <ul class="list-disc list-inside space-y-2 text-stone-700">
+                                <li><b>Fissuras Estruturais:</b> Rachaduras graves na fachada indicavam movimentação do solo.</li>
+                                <li><b>Infiltração e Umidade:</b> A base da parede estava degradada pela umidade vinda do solo, comprometendo a alvenaria.</li>
+                                <li><b>Fundação Inadequada:</b> A escada de acesso foi construída sobre um aterro instável, causando recalque e "puxando" a parede da casa.</li>
+                                <li><b>Segurança Comprometida:</b> O conjunto apresentava risco de colapso parcial, ameaçando a segurança dos moradores.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="diretrizes" class="py-16 md:py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-10 text-teal-900">Diretrizes: Como Fazer Acontecer em Maceió</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-stone-600">
+                    A efetivação da ATHIS exige uma rede colaborativa. O TCC propõe um modelo de gestão compartilhada para transformar a lei em uma política pública de impacto social contínuo.
+                </p>
+                <div class="w-full max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg border border-stone-200">
+                    <div class="flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0 md:space-x-8 text-center">
+                        <div class="flex flex-col items-center">
+                            <div class="w-24 h-24 bg-teal-100 rounded-full flex items-center justify-center mb-3">
+                                <span class="text-3xl">🏛️</span>
+                            </div>
+                            <h4 class="font-bold text-lg">Poder Público</h4>
+                            <p class="text-sm text-stone-600">Regulamentar a lei, criar um fundo e gerenciar o cadastro das famílias.</p>
+                        </div>
+                        <div class="font-bold text-2xl text-teal-500 hidden md:block">&rarr;</div>
+                        <div class="font-bold text-2xl text-teal-500 md:hidden">&darr;</div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-24 h-24 bg-teal-100 rounded-full flex items-center justify-center mb-3">
+                                <span class="text-3xl">🏗️</span>
+                            </div>
+                            <h4 class="font-bold text-lg">CAU/AL</h4>
+                            <p class="text-sm text-stone-600">Credenciar e capacitar profissionais, garantindo a qualidade técnica.</p>
+                        </div>
+                        <div class="font-bold text-2xl text-teal-500 hidden md:block">&harr;</div>
+                        <div class="font-bold text-2xl text-teal-500 md:hidden">&darr;</div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-24 h-24 bg-teal-100 rounded-full flex items-center justify-center mb-3">
+                                <span class="text-3xl">🎓</span>
+                            </div>
+                            <h4 class="font-bold text-lg">Universidades</h4>
+                            <p class="text-sm text-stone-600">Envolver estudantes em projetos, ampliando o atendimento e a formação social.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-teal-900 text-stone-300 py-8">
+        <div class="container mx-auto px-6 text-center text-sm">
+            <p>Visualização interativa baseada no Trabalho de Conclusão de Curso de Severino Feliciano da Silva Filho.</p>
+            <p>Curso de Arquitetura e Urbanismo - Centro Universitário Mário Pontes Jucá (UMJ), Maceió-AL, 2025.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const chartDescriptions = {
+                bairros: "O gráfico mostra os bairros com maior número de ocorrências registradas pela Defesa Civil, destacando as áreas com maior concentração de problemas construtivos.",
+                territorios: "Aqui vemos os territórios específicos, como grotas e conjuntos, com mais registros. Isso permite um diagnóstico mais focado da vulnerabilidade.",
+                tempo: "Esta linha do tempo exibe a variação no número de ocorrências, revelando picos que podem coincidir com períodos chuvosos ou outros fatores sazonais.",
+                status: "Este gráfico demonstra a proporção de ocorrências concluídas, arquivadas ou encaminhadas, oferecendo uma visão sobre o fluxo de resolução das demandas."
+            };
+
+            const bairrosData = {
+                labels: ['Jacintinho', 'Chã de Bebedouro', 'Feitosa', 'Bebedouro', 'Benedito Bentes', 'Barro Duro', 'Chã da Jaqueira', 'Farol', 'Ouro Preto', 'Jacarecica'],
+                datasets: [{
+                    label: 'Número de Ocorrências',
+                    data: [20, 17, 16, 15, 13, 7, 6, 6, 6, 3],
+                    backgroundColor: '#0f766e',
+                    borderColor: '#042f2e',
+                    borderWidth: 1
+                }]
+            };
+
+            const territoriosData = {
+                labels: ['Flechal de Baixo', 'Bairro Treze', 'Grota da Alegria', 'Chã de Jaqueira I', 'Grota do Cigano', 'Vila do Rotary', 'Travessa São Miguel', 'Ladeira Lopes'],
+                datasets: [{
+                    label: 'Número de Ocorrências',
+                    data: [11, 9, 8, 7, 6, 5, 5, 5],
+                    backgroundColor: '#0f766e',
+                    borderColor: '#042f2e',
+                    borderWidth: 1
+                }]
+            };
+            
+            const tempoData = {
+                labels: ['2021-Q1', '2021-Q2', '2021-Q3', '2021-Q4', '2022-Q1', '2022-Q2', '2022-Q3', '2022-Q4', '2023-Q1', '2023-Q2', '2023-Q3', '2023-Q4', '2024-Q1'],
+                datasets: [{
+                    label: 'Número de Ocorrências',
+                    data: [10, 4, 1, 1, 4, 6, 4, 1, 12, 6, 2, 3, 5],
+                    fill: false,
+                    borderColor: '#0f766e',
+                    tension: 0.1
+                }]
+            };
+
+            const statusData = {
+                labels: ['Concluída/Arquivada', 'Encaminhada (Setor Externo)', 'Encaminhada (Gabinete)'],
+                datasets: [{
+                    label: 'Distribuição de Status',
+                    data: [87, 11, 2],
+                    backgroundColor: [
+                        '#0d9488',
+                        '#14b8a6',
+                        '#ccfbf1'
+                    ],
+                    hoverOffset: 4
+                }]
+            };
+
+            const chartOptions = (type) => ({
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: type === 'doughnut'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                }
+                                if (context.parsed.x !== null && type === 'bar') {
+                                    label += context.parsed.x;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: type.includes('bar') ? {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { color: '#404040' }
+                    },
+                    y: {
+                        ticks: { color: '#404040' }
+                    }
+                } : (type === 'line' ? {
+                    x: { ticks: { color: '#404040' } },
+                    y: { beginAtZero: true, ticks: { color: '#404040' } }
+                } : {})
+            });
+            
+            const charts = {};
+            
+            function renderChart(id, type, data, options) {
+                const ctx = document.getElementById(id).getContext('2d');
+                if (charts[id]) {
+                    charts[id].destroy();
+                }
+                charts[id] = new Chart(ctx, { type, data, options });
+            }
+
+            renderChart('bairrosChart', 'bar', bairrosData, { ...chartOptions('bar'), indexAxis: 'y' });
+            renderChart('territoriosChart', 'bar', territoriosData, { ...chartOptions('bar'), indexAxis: 'y' });
+            renderChart('tempoChart', 'line', tempoData, chartOptions('line'));
+            renderChart('statusChart', 'doughnut', statusData, chartOptions('doughnut'));
+
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const chartContainers = document.querySelectorAll('.chart-container');
+            const descriptionEl = document.getElementById('chart-description');
+            
+            descriptionEl.textContent = chartDescriptions.bairros;
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const chartId = button.dataset.chart;
+
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    chartContainers.forEach(container => {
+                        if (container.id === `chart-${chartId}-container`) {
+                            container.classList.remove('hidden');
+                        } else {
+                            container.classList.add('hidden');
+                        }
+                    });
+                    
+                    descriptionEl.textContent = chartDescriptions[chartId];
+                });
+            });
+
+            const accordionButtons = document.querySelectorAll('#accordion button');
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = document.getElementById(button.dataset.target);
+                    const isVisible = !content.classList.contains('hidden');
+                    
+                    document.querySelectorAll('.accordion-content').forEach(c => c.classList.add('hidden'));
+                    document.querySelectorAll('#accordion button span').forEach(s => s.textContent = '+');
+                    
+                    if (!isVisible) {
+                        content.classList.remove('hidden');
+                        button.querySelector('span').textContent = '-';
+                    }
+                });
+            });
+
+            const btnAntes = document.getElementById('btn-antes');
+            const btnDepois = document.getElementById('btn-depois');
+            const imagemCaso = document.getElementById('imagem-caso');
+            const textoCaso = document.getElementById('texto-caso');
+
+            const casoContent = {
+                antes: {
+                    img: './antes.jpg',
+                    alt: 'Fachada do imóvel antes da intervenção',
+                    html: `
+                        <h3 class="font-bold text-2xl mb-4 text-amber-700">Diagnóstico: Risco Iminente</h3>
+                        <ul class="list-disc list-inside space-y-2 text-stone-700">
+                            <li><b>Fissuras Estruturais:</b> Rachaduras graves na fachada indicavam movimentação do solo.</li>
+                            <li><b>Infiltração e Umidade:</b> A base da parede estava degradada pela umidade vinda do solo, comprometendo a alvenaria.</li>
+                            <li><b>Fundação Inadequada:</b> A escada de acesso foi construída sobre um aterro instável, causando recalque e "puxando" a parede da casa.</li>
+                            <li><b>Segurança Comprometida:</b> O conjunto apresentava risco de colapso parcial, ameaçando a segurança dos moradores.</li>
+                        </ul>`
+                },
+                depois: {
+                    img: './depois.jpg',
+                    alt: 'Perspectiva da proposta arquitetônica para o imóvel',
+                    html: `
+                        <h3 class="font-bold text-2xl mb-4 text-teal-700">Proposta: Segurança e Dignidade</h3>
+                        <ul class="list-disc list-inside space-y-2 text-stone-700">
+                            <li><b>Muro de Arrimo:</b> Construção de um muro de contenção em pedra para estabilizar o terreno de forma definitiva.</li>
+                            <li><b>Sistema de Drenagem:</b> Instalação de drenos para aliviar a pressão da água no solo, garantindo a durabilidade do muro.</li>
+                            <li><b>Recuperação da Fachada:</b> Tratamento das fissuras e nova impermeabilização para acabar com a umidade.</li>
+                            <li><b>Acesso Seguro e Varanda:</b> Criação de uma nova escada segura e uma pequena varanda, qualificando o espaço de convivência.</li>
+                        </ul>`
+                }
+            };
+
+            function toggleCaso(state) {
+                if (state === 'antes') {
+                    btnAntes.classList.add('bg-white', 'text-teal-800', 'shadow');
+                    btnAntes.classList.remove('text-stone-600');
+                    btnDepois.classList.remove('bg-white', 'text-teal-800', 'shadow');
+                    btnDepois.classList.add('text-stone-600');
+                    imagemCaso.src = casoContent.antes.img;
+                    imagemCaso.alt = casoContent.antes.alt;
+                    textoCaso.innerHTML = casoContent.antes.html;
+                } else {
+                    btnDepois.classList.add('bg-white', 'text-teal-800', 'shadow');
+                    btnDepois.classList.remove('text-stone-600');
+                    btnAntes.classList.remove('bg-white', 'text-teal-800', 'shadow');
+                    btnAntes.classList.add('text-stone-600');
+                    imagemCaso.src = casoContent.depois.img;
+                    imagemCaso.alt = casoContent.depois.alt;
+                    textoCaso.innerHTML = casoContent.depois.html;
+                }
+            }
+
+            btnAntes.addEventListener('click', () => toggleCaso('antes'));
+            btnDepois.addEventListener('click', () => toggleCaso('depois'));
+
+            const mobileNav = document.getElementById('mobile-nav');
+            mobileNav.addEventListener('change', (e) => {
+                window.location.hash = e.target.value;
+            });
+        });
+    </script>
+</body>
+</html>
